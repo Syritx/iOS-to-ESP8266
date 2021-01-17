@@ -9,7 +9,7 @@ led.on()
 
 button = machine.Pin(14, machine.Pin.IN, machine.Pin.PULL_UP)
 
-ip = '192.168.0.165' # i.e. x.x.x.x
+ip = 'ip-here' # i.e. x.x.x.x
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 def connect():
