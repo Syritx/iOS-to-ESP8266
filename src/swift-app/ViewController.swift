@@ -10,7 +10,7 @@ import Foundation
 
 class ViewController: UIViewController {
     
-    let host = "192.168.0.165"
+    let host = "ip-here" // i.e. x.x.x.x
     let port = 6060
     var socket : CFSocket?
     
