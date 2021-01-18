@@ -13,32 +13,45 @@ class ViewController: UIViewController {
     let host = "ip-here" // i.e. x.x.x.x
     let port = 6060
     var socket : CFSocket?
+    var loop : CFRunLoopSource?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         let view = UIView()
-        view.backgroundColor = .white
+        view.backgroundColor = .black
+        self.view = view
+        
+        let width = UIScreen.main.bounds.width-40
+        let yOffset = 20
+        let inlineOffset = 10
         
         let message_button = UIButton(type: .system)
-        message_button.frame = CGRect(x: 20, y: 20, width: 200, height: 50)
-        message_button.setTitle("Request data", for: .normal)
+        message_button.frame = CGRect(x: 20, y: 20+yOffset+inlineOffset, width: Int(width), height: 50)
+        message_button.setTitle("Request Data", for: .normal)
+        message_button.backgroundColor = .link
+        message_button.setTitleColor(.white, for: .normal)
+        message_button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 20)
         message_button.addTarget(self, action: #selector(createMessage(_:)), for: .touchUpInside)
         
         let connection_button = UIButton(type: .system)
-        connection_button.frame = CGRect(x: 20, y: 70, width: 200, height: 50)
+        connection_button.frame = CGRect(x: 20, y: 70+yOffset+(inlineOffset*2), width: Int(width), height: 50)
         connection_button.setTitle("Connect", for: .normal)
+        connection_button.backgroundColor = .link
+        connection_button.setTitleColor(.white, for: .normal)
+        connection_button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 20)
         connection_button.addTarget(self, action: #selector(tryConnectToServer(_:)), for: .touchUpInside)
         
         let disconnect_button = UIButton(type: .system)
-        disconnect_button.frame = CGRect(x: 20, y: 120, width: 200, height: 50)
+        disconnect_button.frame = CGRect(x: 20, y: 120+yOffset+(inlineOffset*3), width: Int(width), height: 50)
         disconnect_button.setTitle("Disconnect", for: .normal)
+        disconnect_button.backgroundColor = .link
+        disconnect_button.setTitleColor(.white, for: .normal)
+        disconnect_button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 20)
         disconnect_button.addTarget(self, action: #selector(disconnect(_:)), for: .touchUpInside)
         
         view.addSubview(connection_button)
         view.addSubview(disconnect_button)
         view.addSubview(message_button)
-        self.view = view
-        
     }
     
     @objc func tryConnectToServer(_ sender: UIButton) {
@@ -81,6 +94,8 @@ class ViewController: UIViewController {
         if socket == nil {
             throw SocketError.socketCreationFailed
         }
+        
+        print(loop.debugDescription)
 
         var sin = sockaddr_in() // https://linux.die.net/man/7/ip
         sin.sin_len = __uint8_t(MemoryLayout.size(ofValue: sin))
