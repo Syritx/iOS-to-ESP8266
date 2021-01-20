@@ -23,6 +23,8 @@ namespace iphone_esp_server {
             serverSocket.Bind(iPEndPoint);
             serverSocket.Listen(5);
 
+            System.Console.WriteLine(iP.ToString());
+
             ReceiveAndAcceptClients();
         }
 
@@ -60,8 +62,10 @@ namespace iphone_esp_server {
                 }
 
                 if (command.StartsWith("[to_iphone]")) {
-                    if (id-1 == 0) SendToDesignatedClient(1, command);
-                    else SendToDesignatedClient(0, command);
+                    string c = command.Split("[to_iphone]")[1];
+
+                    if (id-1 == 0) SendToDesignatedClient(1, c);
+                    else SendToDesignatedClient(0, c);
                 }
             }
             client.Close();
@@ -70,6 +74,7 @@ namespace iphone_esp_server {
         void SendToDesignatedClient(int id, string message) {
             try {
                 clientSockets[id].Send(Encoding.UTF8.GetBytes(message));
+                System.Console.WriteLine("sent");
             }
             catch(System.Exception e) {}
         }
@@ -78,7 +83,7 @@ namespace iphone_esp_server {
             while (true) {
                 Socket client = serverSocket.Accept();
                 clientSockets.Add(client);
-                System.Console.WriteLine("connected");
+                System.Console.WriteLine("found connection");
                 Task.Run(() => LocalClientThread(client));
             }
         }
