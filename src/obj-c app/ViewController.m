@@ -32,25 +32,32 @@
     NSData *data = [[NSData alloc] initWithData:[@"[get_data]" dataUsingEncoding:NSASCIIStringEncoding]];
     [outputStream write:[data bytes] maxLength:[data length]];
     
+    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC));
+    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
     
-    uint8_t buffer[1024];
-    int len;
-    while ([inputStream hasBytesAvailable]) {
-        len = [inputStream read:buffer maxLength:sizeof(buffer)];
-        if (len > 0) {
-            NSLog(@"got data");
-            NSString *output = [[NSString alloc] initWithBytes:buffer length:len encoding:NSASCIIStringEncoding];
-            if (output != nil) {
-                NSLog(@"%@", output);
-                NSArray* COMMANDS = [output componentsSeparatedByString: @"[command_buffer]"];
-                for (int i = 0; i < [COMMANDS count]; i++) {
-                    NSLog(@"%@ index: %d", [COMMANDS objectAtIndex: i], i);
-                    if ([[COMMANDS objectAtIndex: i] hasPrefix: @"[temperature]:"]) {
-                        [temperatureLabel setText: [[COMMANDS objectAtIndex: i] uppercaseString]];
+        uint8_t buffer[1024];
+        int len;
+        while ([inputStream hasBytesAvailable]) {
+            len = [inputStream read:buffer maxLength:sizeof(buffer)];
+            if (len > 0) {
+
+                NSLog(@"got data");
+                NSString *output = [[NSString alloc] initWithBytes:buffer length:len encoding:NSASCIIStringEncoding];
+                if (output != nil) {
+                    NSArray* COMMANDS = [output componentsSeparatedByString: @"[command_buffer]"];
+
+                    for (int i = 0; i < [COMMANDS count]; i++) {
+
+                        if ([[COMMANDS objectAtIndex: i] hasPrefix: @"[temperature]:"]) {
+                            [temperatureLabel setText: [[COMMANDS objectAtIndex: i] uppercaseString]];
+                        }
+                        if ([[COMMANDS objectAtIndex: i] hasPrefix: @"[humidity]:"]) {
+                            [humidityLabel setText: [[COMMANDS objectAtIndex: i] uppercaseString]];
+                        }
                     }
-                    if ([[COMMANDS objectAtIndex: i] hasPrefix: @"[humidity]:"]) {
-                        [humidityLabel setText: [[COMMANDS objectAtIndex: i] uppercaseString]];
-                    }
+                }
+                else {
+                    NSLog(@"output data is NULL");
                 }
             }
         }
@@ -59,7 +66,7 @@
 
 - (IBAction) connectToServer : (id)sender {
     
-    // CHANGE 'HOST' VARIABLE DECLARED AT LINE 96
+    // CHANGE 'HOST' VARIABLE DECLARED AT LINE 103
     CFStreamCreatePairWithSocketToHost(kCFAllocatorDefault, (__bridge CFStringRef)HOST, 6060, &readStream, &writeStream);
     
     inputStream = (__bridge NSInputStream *)readStream;
