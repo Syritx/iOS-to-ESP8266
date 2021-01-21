@@ -25,6 +25,9 @@ def display_content():
     humidity = dht22.humidity()
 
     try:
+	led.off()
+	time.sleep(0.2)
+	led.on()
     	s.send('[to_iphone]{b}[humidity]: {h} {b}[temperature]: {t}'.format(b='[command_buffer]', h=humidity, t=temp))
     except:
 	print('socket err')
