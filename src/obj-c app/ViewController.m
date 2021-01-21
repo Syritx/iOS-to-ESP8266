@@ -61,7 +61,7 @@
                 }
             }
         }
-    }
+    });
 }
 
 - (IBAction) connectToServer : (id)sender {
